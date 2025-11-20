@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Landing — Facturas Ficticias (Pruebas)</title>
+    <style>
+        :root {
+            --bg: #f6f7f9;
+            --card: #ffffff;
+            --muted: #6b7280;
+            --accent: #2b6cb0
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            background: var(--bg);
+            margin: 0
+        }
+
+        .container {
+            max-width: 88vw;
+            margin: 28px auto;
+            padding: 18px
+        }
+
+        header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .card {
+            width: 100%;
+            background: var(--card);
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px
+        }
+
+        input[type=text],
+        select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px
+        }
+
+        button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 850px;
+            gap: 16px;
+            margin-top: 16px
+        }
+
+        .table-wrap {
+            overflow: auto border
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eef2f7;
+            text-align: left;
+            font-size: 14px
+        }
+
+        th {
+            background: #fbfdff;
+            color: #111827;
+            font-weight: 600;
+            position: sticky;
+            top: 0
+        }
+
+        tr:hover {
+            background: #fbfbfc
+        }
+
+        .small {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .iframe-wrap {
+            height: 720px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e6eef8;
+          
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0
+        }
+
+        .pager {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px
+        }
+
+        .meta {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: #1e3a8a;
+            padding: 6px 8px;
+            border-radius: 999px;
+            font-size: 12px
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        @media (max-width:980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .iframe-wrap {
+                height: 420px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Landing — Facturas </h1>
+                <div class="subtitle">Listado de facturas </div>
+            </div>
+
+        </header>
+
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="flex:1">
+                    <div class="controls">
+                        <input id="q" type="text" placeholder="Buscar por número, cliente o descripción"
+                            style="min-width:240px" />
+                        <input id="dateFrom" type="text" placeholder="Fecha desde (YYYY-MM-DD)" />
+                        <input id="dateTo" type="text" placeholder="Fecha hasta (YYYY-MM-DD)" />
+                        <select id="taxFilter">
+                            <option value="">Todos los impuestos</option>
+                            <option value="0">0%</option>
+                            <option value="12">12%</option>
+                            <option value="18">18%</option>
+                        </select>
+                        <button id="refresh">Refrescar</button>
+                        <button id="clear">Limpiar</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layout">
+                <div>
+                    <div class="table-wrap" id="tableWrap">
+                        <table id="invoicesTable">
+                            <thead>
+                                <tr>
+                                    <th>Nº Factura</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th class="small">Subtotal</th>
+                                    <th class="small">Impuesto</th>
+                                    <th class="small">Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <!-- filas generadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pager">
+                        <button id="prevPage">« Anterior</button>
+                        <div id="pageInfo" class="small">Página 1</div>
+                        <button id="nextPage">Siguiente »</button>
+                        <div style="flex:1"></div>
+                        <div class="small">Total: <span id="totalCount">0</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card small center" style="margin-bottom:12px">Vista previa (selecciona una factura)
+                    </div>
+                    <div class="iframe-wrap">
+                        <iframe id="preview"
+                            srcdoc="<div style=\'padding:32px;font-family:system-ui;color:#374151\'>Selecciona una factura para previsualizar</div>"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="margin-top:14px;text-align:center;color:var(--muted);font-size:13px">Densha|Code - Todos los
+            derechos reservados</footer>
+    </div>
+
+    <script>
+        // Landing page script mejorado - usa creación de nodos (no plantillas literales) y espera DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const OUT_DIR = 'invoices_output';
+            const CSV_FILE = `${OUT_DIR}/invoices_summary.csv`;
+            const PAGE_SIZE = 75;
+
+            let invoices = [];
+            let filtered = [];
+            let page = 1;
+
+            function parseCSV(text) {
+                // Parser CSV sencillo que soporta comas dentro de comillas
+                const lines = [];
+                const rows = text.split(/\r?\n/);
+                for (const row of rows) {
+                    if (!row.trim()) continue;
+                    const cols = [];
+                    let cur = '';
+                    let inQuotes = false;
+                    for (let i = 0; i < row.length; i++) {
+                        const ch = row[i];
+                        if (ch === '"') {
+                            if (inQuotes && row[i + 1] === '"') { cur += '"'; i++; } else { inQuotes = !inQuotes; }
+                            continue;
+                        }
+                        if (ch === ',' && !inQuotes) { cols.push(cur); cur = ''; continue; }
+                        cur += ch;
+                    }
+                    cols.push(cur);
+                    lines.push(cols.map(c => c.trim()));
+                }
+                const headers = lines.shift() || [];
+                return lines.map(r => {
+                    const obj = {};
+                    for (let i = 0; i < headers.length; i++) obj[headers[i].trim()] = r[i] !== undefined ? r[i] : '';
+                    return obj;
+                });
+            }
+
+            function moneyFmt(v) {
+                const n = Number(v) || 0;
+                return n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            async function loadCSV() {
+                try {
+                    const res = await fetch(CSV_FILE);
+                    if (!res.ok) throw new Error(`${CSV_FILE} no encontrado (status ${res.status})`);
+                    const text = await res.text();
+                    const parsed = parseCSV(text);
+                    invoices = parsed.map(r => ({
+                        invoice_number: (r.invoice_number || r.invoice || r.id || '').toString().trim(),
+                        date: r.date || '',
+                        client_name: r.client_name || r.client || r.customer || '',
+                        client_id: r.client_id || r.customer_id || '',
+                        subtotal: r.subtotal || r.subtotal_val || r.subtotal || '0',
+                        tax: (r.tax || r.tax_amount || '0').toString(),
+                        total: r.total || r.total_val || '0',
+                        file: r.file || `${OUT_DIR}/invoice_${(r.invoice_number || r.invoice || r.id || '').padStart(6, '0')}.html`
+                    }));
+                    filtered = invoices.slice();
+                    page = 1;
+                    render();
+                } catch (err) {
+                    // Si no encuentra CSV, muestra ejemplos de ayuda para debug
+                    console.warn('Error cargando CSV:', err.message);
+                    invoices = [
+                        { invoice_number: '000001', date: '2025-01-01', client_name: 'Cliente Ejemplo', subtotal: '120.00', tax: '12', total: '134.40', file: `${OUT_DIR}/invoice_000001.html` },
+                        { invoice_number: '000002', date: '2025-02-13', client_name: 'Cliente Demo', subtotal: '200.00', tax: '0', total: '200.00', file: `${OUT_DIR}/invoice_000002.html` }
+                    ];
+                    filtered = invoices.slice();
+                    render();
+                    alert('No se pudo cargar el CSV. Se han mostrado facturas de ejemplo. Revisa que "' + CSV_FILE + '" exista y que sirvas la carpeta por HTTP (ej. `python -m http.server`).');
+                }
+            }
+
+            function clearTable() {
+                const tbody = document.getElementById('tbody');
+                while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+            }
+
+            function render() {
+                clearTable();
+                const start = (page - 1) * PAGE_SIZE;
+                const pageItems = filtered.slice(start, start + PAGE_SIZE);
+                const tbody = document.getElementById('tbody');
+
+                for (const inv of pageItems) {
+                    const tr = document.createElement('tr');
+
+
+
+                    const tdNum = document.createElement('td'); tdNum.innerHTML = `<b>${escapeHtml(inv.invoice_number)}</b>`;
+                    const tdDate = document.createElement('td'); tdDate.className = 'small'; tdDate.textContent = inv.date;
+                    const tdClient = document.createElement('td'); tdClient.textContent = inv.client_name;
+                    const tdSub = document.createElement('td'); tdSub.className = 'small'; tdSub.textContent = 'Bs ' + moneyFmt(inv.subtotal);
+                    const tdTax = document.createElement('td'); tdTax.className = 'small'; tdTax.textContent = (inv.tax || '0') + ' %';
+                    const tdTot = document.createElement('td');
+                    tdTot.className = 'small';
+                    tdTot.innerHTML = `<strong>Bs ${moneyFmt(inv.total)}</strong>`;
+                    const tdAcc = document.createElement('td');
+
+
+                    const btn = document.createElement('button'); btn.textContent = 'Ver'; btn.addEventListener('click', () => previewFile(inv.file));
+                    const a = document.createElement('a'); a.href = inv.file; a.download = ''; a.style.marginLeft = '8px'; a.textContent = 'Descargar';
+                    tdAcc.appendChild(btn); tdAcc.appendChild(a);
+
+                    tr.appendChild(tdNum);
+                    tr.appendChild(tdDate);
+                    tr.appendChild(tdClient);
+                    tr.appendChild(tdSub);
+                    tr.appendChild(tdTax);
+                    tr.appendChild(tdTot);
+                    tr.appendChild(tdAcc);
+
+
+                    tbody.appendChild(tr);
+                }
+
+                document.getElementById('totalCount').innerText = filtered.length;
+                document.getElementById('pageInfo').innerText = `Página ${page} / ${Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))}`;
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]));
+            }
+
+            function previewFile(path) {
+                fetch(path).then(r => {
+                    if (!r.ok) throw new Error('Archivo no encontrado: ' + path + ' (status ' + r.status + ')');
+                    return r.text();
+                }).then(t => {
+                    const iframe = document.getElementById('preview');
+                    const banner = `<div style='position:fixed;left:12px;top:12px;background:#fff;padding:6px 8px;border-radius:6px;border:1px solid #e6eef8;font-size:12px;color:#374151;z-index:9999'>VISTA DE LA FACTURA</div>`;
+                    iframe.srcdoc = banner + t;
+                }).catch(err => {
+                    alert('No se pudo cargar la factura: ' + err.message + '\nVerifica que los archivos HTML estén en "' + OUT_DIR + '" y que sirvas por HTTP.');
+                });
+            }
+
+            function applyFilters() {
+                const q = document.getElementById('q').value.trim().toLowerCase();
+                const dateFrom = document.getElementById('dateFrom').value.trim();
+                const dateTo = document.getElementById('dateTo').value.trim();
+                const tax = document.getElementById('taxFilter').value;
+                filtered = invoices.filter(i => {
+                    if (q) {
+                        const s = `${(i.invoice_number || '')} ${(i.client_name || '')} ${(i.file || '')}`.toLowerCase();
+                        if (!s.includes(q)) return false;
+                    }
+                    if (tax) { if (String(i.tax) !== tax) return false; }
+                    if (dateFrom) { if (!i.date || i.date < dateFrom) return false; }
+                    if (dateTo) { if (!i.date || i.date > dateTo) return false; }
+                    return true;
+                });
+                page = 1; render();
+            }
+
+            // eventos UI
+            document.getElementById('refresh').addEventListener('click', loadCSV);
+            document.getElementById('clear').addEventListener('click', () => { document.getElementById('q').value = ''; document.getElementById('dateFrom').value = ''; document.getElementById('dateTo').value = ''; document.getElementById('taxFilter').value = ''; filtered = invoices.slice(); page = 1; render(); });
+            document.getElementById('q').addEventListener('input', applyFilters);
+            document.getElementById('dateFrom').addEventListener('change', applyFilters);
+            document.getElementById('dateTo').addEventListener('change', applyFilters);
+            document.getElementById('taxFilter').addEventListener('change', applyFilters);
+            document.getElementById('prevPage').addEventListener('click', () => { if (page > 1) { page--; render(); } });
+            document.getElementById('nextPage').addEventListener('click', () => { if (page * PAGE_SIZE < filtered.length) { page++; render(); } });
+
+            // iniciar
+            loadCSV();
+        });
+
+        
+    </script>
+</body>
+
+</html>
