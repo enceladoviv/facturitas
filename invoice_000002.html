@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Factura #000002</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 20px auto;
+      color: #222
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;     
+      
+  
+    }
+
+    .company {
+      font-weight: 700
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px
+
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left
+    }
+
+    th {
+      background: #f4f4f4
+    }
+
+    .right {
+      text-align: right
+    }
+
+    .total {
+      font-weight: 700
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #555
+    }
+
+    .container{
+      outline: 1px solid #222;
+      padding: 10px;
+      border-radius: 10px;
+  
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+    <header>
+    <div>
+      <div class="company">ACME Pruebas S.R.L.</div>
+      <div>NIT: 800244932</div>
+      <div>Calle Azeneth Berenguer 47 Apt. 13 , Cáceres, 43205</div>
+    </div>
+    <div>
+      <div>Factura Nº <strong>000002</strong></div>
+      <div>Fecha: 2025-11-08</div>
+      <div>Método de pago: Contado</div>
+    </div>
+  </header>
+
+  <section style="margin-top:20px">
+    <strong>Cliente</strong>
+    <div>Xavier Rocha-Reina</div>
+    <div>NIT/CI: 685-46-2598</div>
+    <div>Avenida Faustino Gilabert 64, Madrid, 24588</div>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Cantidad</th>
+        <th>Descripción</th>
+        <th>Precio unitario</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2</td><td>Argentina llevar hasta poder salud.</td><td class='right'>200,55</td><td class='right'>401,10</td></tr><tr><td>7</td><td>Alto teoría hubiera vuelve salida.</td><td class='right'>167,43</td><td class='right'>1.172,01</td></tr><tr><td>5</td><td>Paz zona hoy.</td><td class='right'>346,37</td><td class='right'>1.731,85</td></tr><tr><td>3</td><td>Pasa hacer propios manos revolución.</td><td class='right'>335,20</td><td class='right'>1.005,60</td></tr><tr><td>6</td><td>Sus b fernando presencia nuevas.</td><td class='right'>416,62</td><td class='right'>2.499,72</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="right">SUBTOTAL</td>
+        <td class="right">6.810,28</td>
+      </tr>
+      <tr>
+        <td colspan="3" class="right">IMPUESTO (18%)</td>
+        <td class="right">1.225,85</td>
+      </tr>
+      <tr>
+        <td colspan="3" class="right total">TOTAL</td>
+        <td class="right total"><strong>8.036,13</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <footer>
+    <div>Nota: Documento sin validez fiscal. Uso exclusivamente académico / pruebas.</div>
+  </footer>
+</div>
+
+</body>
+
+</html>
